@@ -34,7 +34,7 @@
     "i18next": "20.3.0",
     "js-yaml": "4.1.0",
     "json5": "2.2.0",
-    "mocha": "8.4.0",
+    "mocha": "10.1.0",
     "uglify-js": "3.13.7"
   },
   "description": "i18next-fs-backend is a backend layer for i18next using in Node.js and for Deno to load translations from the filesystem.",
