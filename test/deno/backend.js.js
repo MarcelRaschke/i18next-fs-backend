@@ -9,7 +9,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 test('BackendConnector with js', async () => {
   // before
-  i18next.init()
+  i18next.init({ fallbackLng: 'en', ns: 'test' })
 
   const connector = i18next.services.backendConnector
   connector.backend = new Backend(i18next.services, {
@@ -29,7 +29,7 @@ test('BackendConnector with js', async () => {
   })
 
   await (new Promise((resolve, reject) => {
-    connector.backend.create(['en'], 'test', 'newKey', 'fallback', (err) => err ? reject(err) : resolve())
+    connector.backend.create(['en'], 'test', 'newKey', 'fallback; of new key', (err) => err ? reject(err) : resolve())
   }))
 
   const ns = await (new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ test('BackendConnector with js', async () => {
 
   assertEquals(ns, {
     key: 'passing',
-    newKey: 'fallback'
+    newKey: 'fallback; of new key'
   })
 
   // after

@@ -1,4 +1,4 @@
-const { test } = Deno
+const { test, writeTextFile } = Deno
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts'
 import { fromFileUrl, dirname } from 'https://deno.land/std/path/mod.ts'
 const __dirname = dirname(fromFileUrl(import.meta.url))
@@ -9,7 +9,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 test('BackendConnector with json5', async () => {
   // before
-  i18next.init()
+  i18next.init({ fallbackLng: 'en', ns: 'test' })
 
   const connector = i18next.services.backendConnector
   connector.backend = new Backend(i18next.services, {
@@ -18,6 +18,14 @@ test('BackendConnector with json5', async () => {
   })
   await wait(200) // I don't know why, probably because of debouncedWrite
   await writeFile(`${__dirname}/../locales/en/test.json5`, { key: 'passing' })
+  await writeTextFile(`${__dirname}/../locales/en/test-with-comments.json5`, `{
+    "key": "passing",
+    // line comment
+    "commented": "value", /* inline block */
+    /* block comment
+       multiple lines */
+    "block": "value"
+  }`)
 
   // test
   await (new Promise((resolve, reject) => {
@@ -26,6 +34,16 @@ test('BackendConnector with json5', async () => {
 
   assertEquals(connector.store.getResourceBundle('en', 'test'), {
     key: 'passing'
+  })
+
+  await (new Promise((resolve, reject) => {
+    connector.load(['en'], ['test-with-comments'], (err) => err ? reject(err) : resolve())
+  }))
+
+  assertEquals(connector.store.getResourceBundle('en', 'test-with-comments'), {
+    key: 'passing',
+    commented: 'value',
+    block: 'value'
   })
 
   await (new Promise((resolve, reject) => {

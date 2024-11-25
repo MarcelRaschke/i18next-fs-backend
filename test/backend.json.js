@@ -1,12 +1,12 @@
 import expect from 'expect.js'
-import { dirname } from 'path';
+import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 import i18next from 'i18next'
 import Backend from '../index.js'
 import { writeFile } from '../lib/writeFile.js'
 
-i18next.init()
+i18next.init({ fallbackLng: 'en', ns: 'test' })
 
 describe('BackendConnector with normal json', () => {
   let connector

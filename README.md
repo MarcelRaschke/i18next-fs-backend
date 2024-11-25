@@ -2,7 +2,6 @@
 
 [![Actions](https://github.com/i18next/i18next-fs-backend/workflows/node/badge.svg)](https://github.com/i18next/i18next-fs-backend/actions?query=workflow%3Anode)
 [![Actions deno](https://github.com/i18next/i18next-fs-backend/workflows/deno/badge.svg)](https://github.com/i18next/i18next-fs-backend/actions?query=workflow%3Adeno)
-[![Travis](https://img.shields.io/travis/i18next/i18next-fs-backend/master.svg?style=flat-square)](https://travis-ci.org/i18next/i18next-fs-backend)
 [![npm version](https://img.shields.io/npm/v/i18next-fs-backend.svg?style=flat-square)](https://www.npmjs.com/package/i18next-fs-backend)
 
 This is an i18next backend to be used in Node.js and Deno. It will load resources from the file system.
@@ -13,7 +12,9 @@ It will load resources from filesystem. Right now it supports following filetype
 
 - .json
 - .json5
+- .jsonc
 - .yml/.yaml
+- .js (very limited, checks for `exports` or `export default`)
 
 # Getting started
 
@@ -89,7 +90,26 @@ const Backend = new Backend();
 Backend.init(null, options);
 ```
 
-# If set i18next initImmediate option to false it will load the files synchronously
+## TypeScript
+
+To properly type the backend options, you can import the `FsBackendOptions` interface and use it as a generic type parameter to the i18next's `init` method, e.g.:
+
+```ts
+import i18n from 'i18next'
+import FsBackend, { FsBackendOptions } from 'i18next-fs-backend'
+
+i18n
+  .use(FsBackend)
+  .init<FsBackendOptions>({
+    backend: {
+      // fs backend options
+    },
+
+    // other i18next options
+  })
+```
+
+# If set i18next initAsync option to false it will load the files synchronously
 
 ```js
 // i18n.js
@@ -101,7 +121,7 @@ i18next
   .use(Backend)
   .init({
     // debug: true,
-    initImmediate: false,
+    initAsync: false,
     fallbackLng: 'en',
     lng: 'en',
     preload: readdirSync(join(__dirname, '../locales')).filter((fileName) => {

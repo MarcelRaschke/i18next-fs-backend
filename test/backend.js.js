@@ -1,12 +1,12 @@
 import expect from 'expect.js'
-import { dirname } from 'path';
+import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 import i18next from 'i18next'
 import Backend from '../index.js'
 import { writeFile } from '../lib/writeFile.js'
 
-i18next.init()
+i18next.init({ fallbackLng: 'en', ns: 'test' })
 
 describe('BackendConnector with js', () => {
   let connector
@@ -38,13 +38,13 @@ describe('BackendConnector with js', () => {
 
   describe('#saveMissing', () => {
     it('should load data', (done) => {
-      connector.backend.create(['en'], 'test', 'newKey', 'fallback', (err) => {
+      connector.backend.create(['en'], 'test', 'newKey', 'fallback; of new key', (err) => {
         expect(err).not.to.be.ok()
         connector.backend.read(['en'], ['test'], (err, ns) => {
           expect(err).not.to.be.ok()
           expect(ns).to.eql({
             key: 'passing',
-            newKey: 'fallback'
+            newKey: 'fallback; of new key'
           })
           done()
         })

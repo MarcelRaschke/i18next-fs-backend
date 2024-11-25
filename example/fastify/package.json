@@ -1,0 +1,21 @@
+{
+  "name": "fastify-example-app",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "build": "rm -rf build && packageName=$(npm pack) && tar -xvzf $packageName && mv package build && rm $packageName && cd build && npm i --production && find ./node_modules/* -mtime +10950 -exec touch {} \\; && rm -f package-lock.json && cd ..",
+    "cf_package": "npm run build && aws cloudformation package --template-file app-sam.json --s3-bucket my-cloudformation-code-artifacts --output-template-file app-output_sam.yaml",
+    "cf_deploy": "aws cloudformation deploy --template-file app-output_sam.yaml --stack-name ${npm_package_name} --region eu-west-1 --capabilities CAPABILITY_IAM --parameter-override",
+    "deploy": "npm run cf_package && npm run cf_deploy"
+  },
+  "dependencies": {
+    "@fastify/aws-lambda": "5.0.0",
+    "fastify": "5.1.0",
+    "i18next": "24.0.0",
+    "i18next-fs-backend": "2.6.0",
+    "i18next-http-middleware": "3.6.0",
+    "mjml": "4.15.3",
+    "@fastify/view": "10.0.1",
+    "pug": "3.0.3"
+  }
+}
